@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1DB954;
+            --secondary-color: #191414;
+            --background-color: #121212;
+            --text-color: #FFFFFF;
+            --text-secondary-color: #B3B3B3;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 90%;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            transition: background-color 0.3s;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+        }
+
+        h1 {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: var(--primary-color);
+            animation: slideIn 1.2s ease-in-out;
+        }
+
+        p {
+            margin: 10px 0;
+            color: var(--text-secondary-color);
+            animation: slideIn 1.4s ease-in-out;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 20px 0;
+            animation: zoomIn 1s ease-in-out;
+            transition: transform 0.3s;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            animation: slideIn 1.6s ease-in-out;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        a:hover {
+            color: #1ed760;
+            transform: scale(1.05);
+        }
+
+        .no-image {
+            color: var(--text-secondary-color);
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .dark-mode-toggle {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+            position: fixed;
+            bottom: 20px; /* Positioned at the bottom */
+            right: 20px; /* Positioned at the right */
+        }
+
+        .dark-mode-toggle:hover {
+            background: #1ed760;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            img {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Artist Profile</h1>
+        <div>
+            <h2>{{ artist_info.name }}</h2>
+            <p>Total Followers: {{ artist_info.total_followers }}</p>
+            <p>Popularity: {{ artist_info.popularity }}</p>
+            {% if artist_info.image %}
+                <img src="{{ artist_info.image }}" alt="{{ artist_info.name }}">
+            {% else %}
+                <p class="no-image">No image available</p>
+            {% endif %}
+            <h3>Top Tracks</h3>
+            <ul>
+                {% for track in artist_info.top_tracks %}
+                    <li><a href="{{ track.external_url }}" target="_blank">{{ track.name }}</a> ({{ track.total_plays }})</li>
+                {% endfor %}
+            </ul>
+            <h3>Albums</h3>
+            <ul>
+                {% for album in artist_info.albums %}
+                    <li>
+                        {% if album.image %}
+                            <img src="{{ album.image }}" alt="{{ album.name }}">
+                        {% else %}
+                            <p class="no-image">No image available</p>
+                        {% endif %}
+                        <p><a href="{{ album.external_url }}" target="_blank">{{ album.name }}</a> (Released: {{ album.release_date }})</p>
+                    </li>
+                {% endfor %}
+            </ul>
+            <h3>Related Artists</h3>
+            <ul>
+                {% for related_artist in artist_info.related_artists %}
+                    <li><a href="{{ related_artist.external_url }}" target="_blank">{{ related_artist.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+    <script>
+        function toggleDarkMode() {
+            const root = document.documentElement;
+            const isDarkMode = root.style.getPropertyValue('--background-color') === '#121212';
+
+            if (isDarkMode) {
+                root.style.setProperty('--background-color', '#FFFFFF');
+                root.style.setProperty('--text-color', '#000000');
+                root.style.setProperty('--text-secondary-color', '#555555');
+                root.style.setProperty('--secondary-color', '#F0F0F0');
+            } else {
+                root.style.setProperty('--background-color', '#121212');
+                root.style.setProperty('--text-color', '#FFFFFF');
+                root.style.setProperty('--text-secondary-color', '#B3B3B3');
+                root.style.setProperty('--secondary-color', '#191414');
+            }
+        }
+    </script>
+</body>
+</html>

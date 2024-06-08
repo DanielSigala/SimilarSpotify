@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include Typeahead.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+    <!-- Include Bloodhound -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/bloodhound.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 90%; /* Adjusted width for better mobile view */
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 700;
+            color: #1DB954;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%; /* Adjusted width for better mobile view */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .tt-hint {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-color: transparent;
+            box-shadow: none;
+            opacity: 1;
+            background: none;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: #888;
+        }
+
+        .tt-menu {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-top: 5px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .tt-suggestion {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .tt-suggestion:hover {
+            background-color: #1DB954;
+        }
+
+        button {
+            width: 100%; /* Adjusted width for better mobile view */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            background-color: #1DB954;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1ed760;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search for an Artist</h1>
+        <form action="/search" method="post">
+            <label for="artist">Enter Artist Name:</label>
+            <!-- Add ID to input for Typeahead.js -->
+            <input type="text" id="artist" name="artist" required autocomplete="off">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <script>
+        // Initialize Typeahead.js
+        $(document).ready(function() {
+            // Define Bloodhound engine
+            var artists = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/suggest?q=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+    
+            // Initialize Typeahead with Bloodhound engine
+            $('#artist').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                name: 'artists',
+                display: 'name',
+                source: artists
+            });
+        });
+    </script>
+</body>
+</html>
